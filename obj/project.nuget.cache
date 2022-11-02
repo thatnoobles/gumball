@@ -1,8 +1,23 @@
 {
   "version": 2,
-  "dgSpecHash": "TyK7JFdF1Br89l9QAQw/Lbilc+zNcaUS70sCRNJLfVHaD25Z5uub2JXtLLeqvBDX1X4mFe5xsfew+VU2CyYjPQ==",
+  "dgSpecHash": "m+ZwhJMswZHI0yLKHbm7blQmIxX2yElnx6iQBxJhWbDAl6OsbriFeUjH81x5ioNtzk+Fwnp+OgKC6cglxVjiJQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\nubbl\\Desktop\\mini projects\\c#\\Gumball\\Gumball.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Danil\\Desktop\\silly mini projects\\Gumball\\Gumball.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net\\3.8.0\\discord.net.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net.commands\\3.8.0\\discord.net.commands.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net.core\\3.8.0\\discord.net.core.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net.interactions\\3.8.0\\discord.net.interactions.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net.rest\\3.8.0\\discord.net.rest.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net.webhook\\3.8.0\\discord.net.webhook.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\discord.net.websocket\\3.8.0\\discord.net.websocket.3.8.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\5.0.0\\microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\system.collections.immutable\\5.0.0\\system.collections.immutable.5.0.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\system.interactive.async\\5.0.0\\system.interactive.async.5.0.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\system.linq.async\\5.0.0\\system.linq.async.5.0.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\system.reactive\\5.0.0\\system.reactive.5.0.0.nupkg.sha512",
+    "C:\\Users\\Danil\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+  ],
   "logs": []
 }
