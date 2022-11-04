@@ -17,7 +17,7 @@ namespace Gumball
 				Description = $"✅ {message}"
 			};
 
-			await ((SocketTextChannel)BotMain.botInstance.Client.GetChannel(channelId)).SendMessageAsync("", false, embedBuilder.Build());
+			await BotMain.botInstance.Guild.GetTextChannel(channelId).SendMessageAsync("", false, embedBuilder.Build());
 		}
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Gumball
 				Description = $"❌ {message}"
 			};
 
-			await ((SocketTextChannel)BotMain.botInstance.Client.GetChannel(channelId)).SendMessageAsync("", false, embedBuilder.Build());
+			await BotMain.botInstance.Guild.GetTextChannel(channelId).SendMessageAsync("", false, embedBuilder.Build());
 		}
 	}
 }

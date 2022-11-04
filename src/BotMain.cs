@@ -4,7 +4,9 @@ namespace Gumball
 {
 	public class BotMain
 	{
-		public static BotMain botInstance;	// This should bot reassigned when a new instance of the bot is created somewhere
+		public static BotMain botInstance;	// This should be reassigned when a new instance of the bot is created somewhere
+
+		public const uint GENERAL_EMBED_COLOR = 0x5cb1db;
 
 		public DiscordSocketClient Client { get; }
 		public RolesHandler Roles { get; }
@@ -23,6 +25,7 @@ namespace Gumball
 
 			Client.MessageReceived += new CommandListener().OnMessageReceived;
 			Client.ReactionAdded += Roles.OnReactionAdded;
+			Client.ReactionRemoved += Roles.OnReactionRemoved;
 		}
 	}
 }

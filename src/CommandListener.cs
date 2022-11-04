@@ -23,10 +23,15 @@ namespace Gumball
 			// WELCOMES
 			// :welcome <add/remove>						Sets a channel to receive (or no longer receive) welcome messages
 
+			// Cache the guild info from the first message the bot detects
+			if (BotMain.botInstance.Guild == null)
+			{
+				BotMain.botInstance.Guild = ((SocketGuildChannel)message.Channel).Guild;
+				await BotMain.botInstance.Roles.Load();
+			}
+
 			// Only listen for messages sent by humans and messages that start with :
 			if (message.Author.IsBot || !message.Content.StartsWith(":")) return;
-
-			BotMain.botInstance.Guild = ((SocketGuildChannel)message.Channel).Guild;
 
 			string[] args = message.Content.Split(' ');
 			if (args.Length <= 1) return;
@@ -49,7 +54,7 @@ namespace Gumball
 							string name = string.Empty;
 
 							for (int i = 4; i < args.Length; i++) name += $"{args[i]} ";
-							name.Trim();
+							name = name.Trim();
 
 							await BotMain.botInstance.Roles.AddRole(message.Channel.Id, colorCode, emoji, name);
 						}
@@ -69,7 +74,7 @@ namespace Gumball
 							string name = string.Empty;
 
 							for (int i = 2; i < args.Length; i++) name += $"{args[i]} ";
-							name.Trim();
+							name = name.Trim();
 
 							await BotMain.botInstance.Roles.RemoveRole(message.Channel.Id, name);
 						}
@@ -83,7 +88,7 @@ namespace Gumball
 
 					// :role message
 					case "message":
-
+						await BotMain.botInstance.Roles.DisplayRoleMessage(message.Channel.Id);
 						break;
 
 					// Invalid function

@@ -14,8 +14,6 @@ namespace Gumball
 
 		private async Task MainAsync()
 		{
-			Console.WriteLine(Convert.ToInt32("0xABCDEF", 16));
-
 			BotMain.botInstance = new BotMain();
 
 			// Setup background processes (logging, listening for commands, etc)
@@ -25,11 +23,17 @@ namespace Gumball
 			await BotMain.botInstance.Client.LoginAsync(TokenType.Bot, File.ReadAllText("token.txt"));
 			await BotMain.botInstance.Client.StartAsync();
 
+			// All good!
+			await Log(new LogMessage(LogSeverity.Info, "Gumball", "ready! :)"));
+
 			// Don't close window automatically
 			await Task.Delay(-1);
 		}
 
-		private Task Log(LogMessage msg)
+		/// <summary>
+		/// Sends a formatted log message to the standard out.
+		/// </summary>
+		public static Task Log(LogMessage msg)
 		{
 			Console.WriteLine(msg);
 			return Task.CompletedTask;
