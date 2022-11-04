@@ -44,7 +44,7 @@ namespace Gumball
 				
 						try
 						{
-							string colorCode = $"{args[2].ToUpper()}";
+							string colorCode = $"0x{args[2].ToUpper()}";
 							string emoji = args[3];
 							string name = string.Empty;
 
@@ -63,6 +63,21 @@ namespace Gumball
 
 					// :role remove <name>
 					case "remove":
+
+						try
+						{
+							string name = string.Empty;
+
+							for (int i = 2; i < args.Length; i++) name += $"{args[i]} ";
+							name.Trim();
+
+							await BotMain.botInstance.Roles.RemoveRole(message.Channel.Id, name);
+						}
+						// If the argument index was out of range, that means the command wasn't entered properly
+						catch (IndexOutOfRangeException)
+						{
+							await SendRoleCommandError(message.Channel.Id);
+						}
 
 						break;
 
@@ -87,7 +102,7 @@ namespace Gumball
 
 		private async Task SendRoleCommandError(ulong channelId)
 		{
-			await BotMain.botInstance.Errors.PrintError(channelId, "**Incorrect usage, try:**\n:role add <color-code> <emoji> <name>\n:role remove <name>\n:role message");
+			await BotMain.botInstance.Out.PrintError(channelId, "**Incorrect usage, try:**\n:role add <color-code> <emoji> <name>\n:role remove <name>\n:role message");
 		}
 	}   
 }

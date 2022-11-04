@@ -4,8 +4,22 @@ using System.Threading.Tasks;
 
 namespace Gumball
 {
-	public class ErrorHandler
+	public class OutputHandler
 	{
+		/// <summary>
+		/// Sends a formatted success message to the given channel.
+		/// </summary>
+		public async Task PrintSuccess(ulong channelId, string message)
+		{
+			EmbedBuilder embedBuilder = new EmbedBuilder()
+			{
+				Color = Color.Green,
+				Description = $"✅ {message}"
+			};
+
+			await ((SocketTextChannel)BotMain.botInstance.Client.GetChannel(channelId)).SendMessageAsync("", false, embedBuilder.Build());
+		}
+
 		/// <summary>
 		/// Sends a formatted error message to the given channel.
 		/// </summary>

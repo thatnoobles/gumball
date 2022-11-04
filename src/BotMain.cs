@@ -8,18 +8,21 @@ namespace Gumball
 
 		public DiscordSocketClient Client { get; }
 		public RolesHandler Roles { get; }
-		public ErrorHandler Errors { get; }
+		public OutputHandler Out { get; }
 
 		public SocketGuild Guild { get; set; }
 		public SocketTextChannel RolesChannel { get; set; }
 
 		public BotMain()
 		{
-			Client = new DiscordSocketClient();
+			DiscordSocketConfig config = new DiscordSocketConfig() { MessageCacheSize = 10 };
+
+			Client = new DiscordSocketClient(config);
 			Roles = new RolesHandler();
-			Errors = new ErrorHandler();
+			Out = new OutputHandler();
 
 			Client.MessageReceived += new CommandListener().OnMessageReceived;
+			Client.ReactionAdded += Roles.OnReactionAdded;
 		}
 	}
 }

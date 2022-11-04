@@ -14,6 +14,8 @@ namespace Gumball
 
 		private async Task MainAsync()
 		{
+			Console.WriteLine(Convert.ToInt32("0xABCDEF", 16));
+
 			BotMain.botInstance = new BotMain();
 
 			// Setup background processes (logging, listening for commands, etc)
