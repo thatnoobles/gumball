@@ -12,6 +12,7 @@ namespace Gumball
 
 		public DiscordSocketClient Client { get; }
 		public RolesHandler Roles { get; }
+		public WelcomesHandler Welcomes { get; }
 		public OutputHandler Out { get; }
 
 		public SocketGuild Guild { get; set; }
@@ -19,15 +20,17 @@ namespace Gumball
 
 		public BotMain()
 		{
-			DiscordSocketConfig config = new DiscordSocketConfig() { MessageCacheSize = 10 };
+			DiscordSocketConfig config = new DiscordSocketConfig() { MessageCacheSize = 100 };
 
 			Client = new DiscordSocketClient(config);
 			Roles = new RolesHandler();
+			Welcomes = new WelcomesHandler();
 			Out = new OutputHandler();
 
 			Client.MessageReceived += new CommandListener().OnMessageReceived;
 			Client.ReactionAdded += Roles.OnReactionAdded;
 			Client.ReactionRemoved += Roles.OnReactionRemoved;
+			Client.UserJoined += Welcomes.OnUserJoined;
 		}
 	
 		/// <summary>

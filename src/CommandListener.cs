@@ -21,13 +21,15 @@ namespace Gumball
 			// :role message								Display the role selection message in the channel where the command was sent.
 			//
 			// WELCOMES
-			// :welcome <add/remove>						Sets a channel to receive (or no longer receive) welcome messages
+			// :welcome <set/remove>						Sets a channel to receive (or no longer receive) welcome messages
 
 			// Cache the guild info from the first message the bot detects
 			if (BotMain.botInstance.Guild == null)
 			{
 				BotMain.botInstance.Guild = ((SocketGuildChannel)message.Channel).Guild;
+				Console.WriteLine(BotMain.botInstance.Guild.Id);
 				await BotMain.botInstance.Roles.Load();
+				BotMain.botInstance.Welcomes.Load();
 			}
 
 			// Only listen for messages sent by humans and messages that start with :
@@ -101,17 +103,37 @@ namespace Gumball
 				}
 			}
 
-			// :welcome <add/remove>
+			// :welcome <set/remove>
 			else if (command == ":welcome")
 			{
 				bool admin = await BotMain.botInstance.AdminCheck(message.Author.Id, message.Channel.Id);
 				if (!admin) return;
+
+				switch (function)
+				{
+					case "set":
+						await BotMain.botInstance.Welcomes.Set(message.Channel.Id);
+						break;
+
+					case "remove":
+						await BotMain.botInstance.Welcomes.Remove(message.Channel.Id);
+						break;
+
+					default:
+						await SendWelcomeCommandError(message.Channel.Id);
+						break;
+				}
 			}
 		}
 
 		private async Task SendRoleCommandError(ulong channelId)
 		{
 			await BotMain.botInstance.Out.PrintError(channelId, "**Incorrect usage, try:**\n:role add <color-code> <emoji> <name>\n:role remove <name>\n:role message");
+		}
+
+		private async Task SendWelcomeCommandError(ulong channelId)
+		{
+			await BotMain.botInstance.Out.PrintError(channelId, "**Incorrect usage, try:**\n:welcome <set/remove>");
 		}
 	}   
 }

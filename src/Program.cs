@@ -24,7 +24,7 @@ namespace Gumball
 			await BotMain.botInstance.Client.StartAsync();
 
 			// All good!
-			await Log(new LogMessage(LogSeverity.Info, "Gumball", "ready! :)"));
+			BotMain.botInstance.Client.Ready += async () => { await Log(new LogMessage(LogSeverity.Info, "Gumball", "ready! :)")); };
 
 			// Don't close window automatically
 			await Task.Delay(-1);

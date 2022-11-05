@@ -1,5 +1,4 @@
 using Discord;
-using Discord.Rest;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,8 @@ namespace Gumball
 		/// Key is the emoji representation for reactions, value is the actual role.
 		/// </summary>
 		public Dictionary<string, IRole> Roles { get; }
+
+		private const string SAVE_FILENAME = "roles-save";
 
 		private IUserMessage rolesMessage = null;
 
@@ -148,9 +149,7 @@ namespace Gumball
 		}
 
 		/// <summary>
-		/// Saves the current list of bot-created roles to a file.
-		/// If the bot ever goes down, it will load the data from the file back into memory.
-		/// Also keep track of the roles message ID so the bot can keep tracking reactions to it.
+		/// Caches to a file the roles message channel/message IDs, and emojis/IDs for each bot-generated role.
 		/// </summary>
 		public void Save()
 		{
@@ -161,16 +160,19 @@ namespace Gumball
 
 			foreach (string roleEmoji in Roles.Keys) write += $"{roleEmoji}|{Roles[roleEmoji].Id}\n";
 			
-			File.WriteAllText("save", write);
+			File.WriteAllText(SAVE_FILENAME, write);
 		}
 
+		/// <summary>
+		/// Loads role data from a saved file, if one exists.
+		/// </summary>
 		public async Task Load()
 		{
-			if (!File.Exists("save")) return;
+			if (!File.Exists(SAVE_FILENAME)) return;
 
 			Roles.Clear();
 
-			string[] lines = File.ReadAllLines("save");
+			string[] lines = File.ReadAllLines(SAVE_FILENAME);
 
 			for (int i = 1; i < lines.Length; i++)
 			{
