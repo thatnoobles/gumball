@@ -17,7 +17,7 @@ namespace Gumball
 		/// </summary>
 		public Dictionary<string, IRole> Roles { get; }
 
-		private IMessage rolesMessage = null;
+		private IUserMessage rolesMessage = null;
 
 		public RolesHandler()
 		{
@@ -55,6 +55,18 @@ namespace Gumball
 			Roles.Add(emoji, role);
 
 			await BotMain.botInstance.Out.PrintSuccess(channelId, $"Added role <@&{role.Id}>");
+
+			if (rolesMessage != null)
+			{
+				await rolesMessage.ModifyAsync(x =>
+				{
+					EmbedBuilder embedBuilder = RolesMessageEmbedBuilder();
+					x.Embed = embedBuilder.Build();
+				});
+
+				await rolesMessage.AddReactionAsync(new Emoji(emoji));
+			}
+
 			Save();
 		}
 
@@ -72,10 +84,24 @@ namespace Gumball
 				return;
 			}
 
-			foreach (string roleEmoji in Roles.Keys) if (Roles[roleEmoji].Name == selectedRole.Name) Roles.Remove(roleEmoji);
-
 			await BotMain.botInstance.Guild.GetRole(selectedRole.Id).DeleteAsync();
 			await BotMain.botInstance.Out.PrintSuccess(channelId, $"Removed role");
+
+			foreach (string roleEmoji in Roles.Keys) if (Roles[roleEmoji].Name == selectedRole.Name)
+			{
+				Roles.Remove(roleEmoji);
+				if (rolesMessage != null) await rolesMessage.RemoveAllReactionsForEmoteAsync(new Emoji(roleEmoji));
+			}
+
+			if (rolesMessage != null)
+			{
+				await rolesMessage.ModifyAsync(x =>
+				{
+					EmbedBuilder embedBuilder = RolesMessageEmbedBuilder();
+					x.Embed = embedBuilder.Build();
+				});
+			}
+
 			Save();
 		}
 
@@ -84,17 +110,7 @@ namespace Gumball
 		/// </summary>
 		public async Task DisplayRoleMessage(ulong channelId)
 		{
-			string description = "react with one of these emotes to get a role!\n--\n";
-			foreach (string emoji in Roles.Keys) description += $"{emoji}\t<@&{Roles[emoji].Id}>\n";
-			description += "--";
-
-			EmbedBuilder embedBuilder = new EmbedBuilder()
-			{
-				Color = BotMain.GENERAL_EMBED_COLOR,
-				Description = description,
-				Footer = new EmbedFooterBuilder() { Text = "have a great day!" },
-				Title = "roles!!",
-			};
+			EmbedBuilder embedBuilder = RolesMessageEmbedBuilder();
 
 			if (rolesMessage != null) await BotMain.botInstance.Guild.GetTextChannel(channelId).DeleteMessageAsync(rolesMessage.Id);
 
@@ -110,6 +126,8 @@ namespace Gumball
 		public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
 		{
 			IMessage msg = await BotMain.botInstance.Guild.GetTextChannel(channel.Id).GetMessageAsync(message.Id);
+			
+			if (reaction.User.Value.IsBot) return;
 			if (msg.Id != rolesMessage.Id) return;
 			if (!Roles.ContainsKey(reaction.Emote.Name)) return;
 
@@ -122,6 +140,7 @@ namespace Gumball
 		public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
 		{
 			IMessage msg = await BotMain.botInstance.Guild.GetTextChannel(channel.Id).GetMessageAsync(message.Id);
+			if (reaction.User.Value.IsBot) return;
 			if (msg.Id != rolesMessage.Id) return;
 			if (!Roles.ContainsKey(reaction.Emote.Name)) return;
 
@@ -152,12 +171,6 @@ namespace Gumball
 			Roles.Clear();
 
 			string[] lines = File.ReadAllLines("save");
-			string[] roleMessageValuesRaw = lines[0].Split(' ');
-
-			ulong channelId = ulong.Parse(roleMessageValuesRaw[0]);
-			ulong messageId = ulong.Parse(roleMessageValuesRaw[1]);
-
-			if (channelId != 0 && messageId != 0) rolesMessage = await BotMain.botInstance.Guild.GetTextChannel(channelId).GetMessageAsync(messageId);
 
 			for (int i = 1; i < lines.Length; i++)
 			{
@@ -174,7 +187,35 @@ namespace Gumball
 				}
 			}
 
+			string[] roleMessageValuesRaw = lines[0].Split(' ');
+
+			ulong channelId = ulong.Parse(roleMessageValuesRaw[0]);
+			ulong messageId = ulong.Parse(roleMessageValuesRaw[1]);
+
+			if (channelId != 0 && messageId != 0) rolesMessage = await BotMain.botInstance.Guild.GetTextChannel(channelId).ModifyMessageAsync(messageId, (x =>
+			{
+				EmbedBuilder embedBuilder = RolesMessageEmbedBuilder();
+				x.Embed = embedBuilder.Build();
+			}));
+
 			await Program.Log(new LogMessage(LogSeverity.Info, "Gumball", $"Loaded roles [{string.Join(", ", Roles.Values.Select(role => role.Id))}]"));
+		}
+	
+		private EmbedBuilder RolesMessageEmbedBuilder()
+		{
+			string description = "react with one of these emotes to get a role!\n--\n";
+			foreach (string emoji in Roles.Keys) description += $"{emoji}\t<@&{Roles[emoji].Id}>\n";
+			description += "--";
+
+			EmbedBuilder embedBuilder = new EmbedBuilder()
+			{
+				Color = BotMain.GENERAL_EMBED_COLOR,
+				Description = description,
+				Footer = new EmbedFooterBuilder() { Text = "have a great day!" },
+				Title = "roles!!",
+			};
+
+			return embedBuilder;
 		}
 	}
 }

@@ -42,6 +42,9 @@ namespace Gumball
 			// :role ...
 			if (command == ":role")
 			{
+				bool admin = await BotMain.botInstance.AdminCheck(message.Author.Id, message.Channel.Id);
+				if (!admin) return;
+
 				switch (function)
 				{
 					// :role add <color-code> <emoji> <name>
@@ -101,7 +104,8 @@ namespace Gumball
 			// :welcome <add/remove>
 			else if (command == ":welcome")
 			{
-				
+				bool admin = await BotMain.botInstance.AdminCheck(message.Author.Id, message.Channel.Id);
+				if (!admin) return;
 			}
 		}
 

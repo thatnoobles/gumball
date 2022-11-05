@@ -1,4 +1,6 @@
+using Discord;
 using Discord.WebSocket;
+using System.Threading.Tasks;
 
 namespace Gumball
 {
@@ -26,6 +28,17 @@ namespace Gumball
 			Client.MessageReceived += new CommandListener().OnMessageReceived;
 			Client.ReactionAdded += Roles.OnReactionAdded;
 			Client.ReactionRemoved += Roles.OnReactionRemoved;
+		}
+	
+		/// <summary>
+		/// Checks to see if the given user is an admin. Returns true if yes, returns false and prints an error message if not.
+		/// </summary>
+		public async Task<bool> AdminCheck(ulong userId, ulong channelId)
+		{
+			bool admin = botInstance.Guild.GetUser(userId).GuildPermissions.Administrator;
+
+			if (!admin) await Out.PrintError(channelId, "You must be an administrator to do this");
+			return admin;
 		}
 	}
 }
