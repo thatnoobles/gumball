@@ -20,7 +20,12 @@ namespace Gumball
 
 		public BotMain()
 		{
-			DiscordSocketConfig config = new DiscordSocketConfig() { MessageCacheSize = 100 };
+			DiscordSocketConfig config = new DiscordSocketConfig()
+			{
+				// GuildMembers intent needs to be enabled so we can listen for users joining
+				GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers,
+				MessageCacheSize = 100
+			};
 
 			Client = new DiscordSocketClient(config);
 			Roles = new RolesHandler();

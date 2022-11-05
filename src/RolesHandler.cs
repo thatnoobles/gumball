@@ -113,6 +113,7 @@ namespace Gumball
 		{
 			EmbedBuilder embedBuilder = RolesMessageEmbedBuilder();
 
+			// Assign the roles message
 			if (rolesMessage != null) await BotMain.botInstance.Guild.GetTextChannel(channelId).DeleteMessageAsync(rolesMessage.Id);
 
 			rolesMessage = await BotMain.botInstance.Guild.GetTextChannel(channelId).SendMessageAsync("", false, embedBuilder.Build());
@@ -128,9 +129,9 @@ namespace Gumball
 		{
 			IMessage msg = await BotMain.botInstance.Guild.GetTextChannel(channel.Id).GetMessageAsync(message.Id);
 			
-			if (reaction.User.Value.IsBot) return;
-			if (msg.Id != rolesMessage.Id) return;
-			if (!Roles.ContainsKey(reaction.Emote.Name)) return;
+			if (reaction.User.Value.IsBot) return;					// Ignore bots
+			if (msg.Id != rolesMessage.Id) return;					// Ignore messages that aren't the roles message
+			if (!Roles.ContainsKey(reaction.Emote.Name)) return;	// Ignore reactions using irrelevant emojis
 
 			await BotMain.botInstance.Guild.GetUser(reaction.UserId).AddRoleAsync(Roles[reaction.Emote.Name]);
 		}
@@ -141,9 +142,9 @@ namespace Gumball
 		public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
 		{
 			IMessage msg = await BotMain.botInstance.Guild.GetTextChannel(channel.Id).GetMessageAsync(message.Id);
-			if (reaction.User.Value.IsBot) return;
-			if (msg.Id != rolesMessage.Id) return;
-			if (!Roles.ContainsKey(reaction.Emote.Name)) return;
+			if (reaction.User.Value.IsBot) return;					// Ignore bots
+			if (msg.Id != rolesMessage.Id) return;					// Ignore messages that aren't the roles message
+			if (!Roles.ContainsKey(reaction.Emote.Name)) return;	// Ignore reactions using irrelevant emojis
 
 			await BotMain.botInstance.Guild.GetUser(reaction.UserId).RemoveRoleAsync(Roles[reaction.Emote.Name]);
 		}
@@ -155,6 +156,7 @@ namespace Gumball
 		{
 			string write = "";
 			
+			// Write roles message channel/message IDs to file (or zeros if there is no roles message)
 			if (rolesMessage == null) write += $"0 0\n";
 			else write += $"{rolesMessage.Channel.Id} {rolesMessage.Id}\n";
 
@@ -168,12 +170,13 @@ namespace Gumball
 		/// </summary>
 		public async Task Load()
 		{
-			if (!File.Exists(SAVE_FILENAME)) return;
+			if (!File.Exists(SAVE_FILENAME)) return;	// No save data to load
 
 			Roles.Clear();
 
 			string[] lines = File.ReadAllLines(SAVE_FILENAME);
 
+			// Update dictionary of roles in memory to reflect what is saved in the file
 			for (int i = 1; i < lines.Length; i++)
 			{
 				string roleEmoji = lines[i].Split('|')[0];
@@ -189,11 +192,13 @@ namespace Gumball
 				}
 			}
 
+			// Update in memory where the roles message is
 			string[] roleMessageValuesRaw = lines[0].Split(' ');
 
 			ulong channelId = ulong.Parse(roleMessageValuesRaw[0]);
 			ulong messageId = ulong.Parse(roleMessageValuesRaw[1]);
 
+			// Edit the roles message to reflect what bot-created roles currently exist
 			if (channelId != 0 && messageId != 0) rolesMessage = await BotMain.botInstance.Guild.GetTextChannel(channelId).ModifyMessageAsync(messageId, (x =>
 			{
 				EmbedBuilder embedBuilder = RolesMessageEmbedBuilder();

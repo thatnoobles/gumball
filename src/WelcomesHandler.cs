@@ -43,16 +43,15 @@ namespace Gumball
 		/// </summary>
 		public async Task OnUserJoined(SocketGuildUser user)
 		{
-			Console.WriteLine(user.DisplayName);
-
 			if (welcomesChannel == null) return;
 
 			EmbedBuilder embedBuilder = new EmbedBuilder()
 			{
-				Author = new EmbedAuthorBuilder() { IconUrl = user.GetAvatarUrl(), Name = user.DisplayName },
+				Author = new EmbedAuthorBuilder() { IconUrl = user.GetDisplayAvatarUrl(), Name = $"{user.DisplayName} #{user.Discriminator}" },
 				Color = BotMain.GENERAL_EMBED_COLOR,
-				Description = "welcome to meow meow! please check out <#1036039443292893275> and all the channels listed under member info.",
-				Footer = new EmbedFooterBuilder() { Text = "i'm happy to have you here!" },
+				Description = $"please check out <#1036039443292893275> and all the channels listed under member info.",	// 1036039443292893275 is the channel ID for #rules
+				Footer = new EmbedFooterBuilder() { Text = "i'm happy to have you here! :)" },
+				Title = "welcome to meow meow!"
 			};
 
 			await BotMain.botInstance.Guild.GetTextChannel(welcomesChannel.Id).SendMessageAsync($"hi <@{user.Id}>!", false, embedBuilder.Build());
